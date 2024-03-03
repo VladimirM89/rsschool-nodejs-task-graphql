@@ -1,11 +1,6 @@
 import { Type } from '@fastify/type-provider-typebox';
-import { PrismaClient } from '@prisma/client';
-import { UUID } from 'crypto';
-import { GraphQLEnumType, GraphQLSchema, buildSchema } from 'graphql';
-import { Context } from './types/context.js';
+import { GraphQLSchema } from 'graphql';
 import { Query } from './query.js';
-
-const prisma = new PrismaClient();
 
 export const gqlResponseSchema = Type.Partial(
   Type.Object({
@@ -26,68 +21,60 @@ export const createGqlResponseSchema = {
   ),
 };
 
-const MemberTypeId = new GraphQLEnumType({
-  name: "MemberTypeId",
-  values: {
-    basic: { value: "basic" },
-    business: { value: "business" }
-  },
-})
+// export const typeDefs = `
+// scalar UUID
 
-export const typeDefs = `
-scalar UUID
+// enum MemberTypeId {
+//   basic
+//   business
+// }
 
-enum MemberTypeId {
-  basic
-  business
-}
+// type MemberType {
+//   id: MemberTypeId
+//   discount: Float
+//   postsLimitPerMonth: Int
+//   profiles: [Profile]
+// }
 
-type MemberType {
-  id: MemberTypeId
-  discount: Float
-  postsLimitPerMonth: Int
-  profiles: [Profile]
-}
+// type Post {
+//   id: UUID!
+//   title: String
+//   content: String
+//   authorId: UUID
+//   author: User
+// }
 
-type Post {
-  id: UUID!
-  title: String
-  content: String
-  authorId: UUID
-  author: User
-}
+// type Profile {
+//   id: UUID!
+//   isMale: Boolean
+//   yearOfBirth: Int
+//   user: User
+//   userId: UUID
+//   memberType: MemberType
+//   memberTypeId: MemberTypeId
+// }
 
-type Profile {
-  id: UUID!
-  isMale: Boolean
-  yearOfBirth: Int
-  user: User
-  userId: UUID
-  memberType: MemberType
-  memberTypeId: MemberTypeId
-}
+// type User {
+//   id: UUID
+//   name: String
+//   balance: Float
+//   profile: Profile
+//   posts: [Post]
+//   userSubscribedTo: [User]
+//   subscribedToUser: [User]
+// }
 
-type User {
-  id: UUID
-  name: String
-  balance: Float
-  profile: Profile
-  posts: [Post]
-  userSubscribedTo: [User]
-  subscribedToUser: [User]
-}
-
-type Query {
-  memberTypes: [MemberType]
-  posts: [Post]
-  profiles: [Profile]
-  users: [User]
-  memberType(id: MemberTypeId!): MemberType
-  post(id: UUID!): Post
-  user(id: UUID!): User
-  profile(id: UUID!): Profile
-}
-`
+// type Query {
+//   memberTypes: [MemberType]
+//   posts: [Post]
+//   profiles: [Profile]
+//   users: [User]
+//   memberType(id: MemberTypeId!): MemberType
+//   post(id: UUID!): Post
+//   user(id: UUID!): User
+//   profile(id: UUID!): Profile
+// }
+// `
 
 // export const resolvers = {
 //     memberTypes: () => prisma.memberType.findMany(),
@@ -128,5 +115,5 @@ type Query {
 
 export const schema = new GraphQLSchema({
   query: Query,
-  // mutation: mutation,
+  // mutation: Mutation,
 })

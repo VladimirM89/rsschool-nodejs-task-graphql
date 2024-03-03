@@ -9,7 +9,7 @@ export const postType = new GraphQLObjectType({
   fields: () => ({
     id: { type: new GraphQLNonNull(UUIDType) },
     title: { type: GraphQLString },
-    content: { type: GraphQLFloat },
+    content: { type: GraphQLString },
     authorId: { type: UUIDType },
     author: {
       type: userType as GraphQLObjectType,
