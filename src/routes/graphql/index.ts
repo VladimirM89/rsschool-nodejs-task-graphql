@@ -16,9 +16,6 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     async handler(req) {
       const variables = req.body.variables;
       const query = req.body.query;
-      // const users = await fastify.prisma.user.findMany();
-      // console.log("________________________________________________QUERY ", query);
-      // console.log("USERS ", users);
       // console.log("________________________________________________VARIABLES ", variables);
       const response = await graphql({
       schema: schema, source: query,  variableValues: variables, contextValue: { prisma } })
