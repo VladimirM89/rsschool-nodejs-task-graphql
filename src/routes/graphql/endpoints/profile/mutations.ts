@@ -14,6 +14,10 @@ type CreateProfileInputType = {
   }
 };
 
+type DeleteProfileInputType = {
+  id: string;
+};
+
 const CreateProfileInput = new GraphQLInputObjectType({
   name: "CreateProfileInput",
   fields: () => ({
@@ -34,6 +38,16 @@ const createProfile = {
   }
 }
 
+const deleteProfile = {
+  type: UUIDType,
+  args: { id: { type: new GraphQLNonNull(UUIDType) } },
+  resolve: async (_: unknown, args: DeleteProfileInputType, { prisma }: Context) => {
+    await prisma.profile.delete({ where: { id: args.id } });
+    return args.id;
+  }
+}
+
 export const ProfileMutations = {
   createProfile,
+  deleteProfile,
 }

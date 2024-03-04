@@ -1,4 +1,4 @@
-import { GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from "graphql";
+import { GraphQLInputObjectType, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
 import { postType } from "./types.js";
 import { UUIDType } from "../../types/uuid.js";
 import { Context } from "../../types/context.js";
@@ -11,6 +11,10 @@ type CreatePostInputType = {
   }
 }
 
+type DeletePostInputType = {
+  id: string;
+}
+
 const CreatePostInput = new GraphQLInputObjectType({
   name: "CreatePostInput",
   fields: () => ({
@@ -21,7 +25,7 @@ const CreatePostInput = new GraphQLInputObjectType({
 });
 
 const createPost = {
-  type: postType,
+  type: postType as GraphQLObjectType,
   args: {
     dto: { type: new GraphQLNonNull(CreatePostInput)}
   },
@@ -30,6 +34,16 @@ const createPost = {
   }
 };
 
+const deletePost = {
+  type: UUIDType,
+  args: { id: { type: new GraphQLNonNull(UUIDType) } },
+  resolve: async (_: unknown, args: DeletePostInputType, { prisma }: Context) => {
+    await prisma.post.delete({ where: { id: args.id } });
+    return args.id;
+  }
+}
+
 export const PostMutations = {
   createPost,
+  deletePost,
 }
