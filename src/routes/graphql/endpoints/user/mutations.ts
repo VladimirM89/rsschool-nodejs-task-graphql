@@ -22,6 +22,12 @@ type ChangeUserInputType = {
   }
 }
 
+type SubscriptionUserInputType = {
+  userId: string;
+  authorId: string;
+};
+
+
 const CreateUserInput = new GraphQLInputObjectType({
   name: "CreateUserInput",
   fields: () => ({
@@ -68,8 +74,35 @@ const changeUser = {
   }
 }
 
+
+
+const subscribeTo = {
+  type: userType as GraphQLObjectType,
+  args: {
+    userId: { type: new GraphQLNonNull(UUIDType) },
+    authorId: { type: new GraphQLNonNull(UUIDType) }
+  },
+  resolve: async (_: unknown, args: SubscriptionUserInputType, { prisma }: Context) => {
+    return await prisma.user.update({ where: { id: args.userId }, data: { userSubscribedTo: {create: { authorId: args.authorId }} } });
+  }
+};
+
+const unsubscribeFrom = {
+  type: UUIDType,
+  args: {
+    userId: { type: new GraphQLNonNull(UUIDType) },
+    authorId: { type: new GraphQLNonNull(UUIDType) }
+  },
+  resolve: async (_: unknown, args: SubscriptionUserInputType, { prisma }: Context) => {
+    await prisma.subscribersOnAuthors.delete({ where: {subscriberId_authorId: {subscriberId: args.userId, authorId: args.authorId}}});
+    return args.userId
+  }
+};
+
 export const UserMutations = {
   createUser,
   deleteUser,
   changeUser,
+  subscribeTo,
+  unsubscribeFrom,
 }
