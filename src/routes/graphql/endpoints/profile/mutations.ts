@@ -1,7 +1,9 @@
-import { GraphQLInputObjectType, GraphQLString, GraphQLFloat, GraphQLObjectType, GraphQLNonNull } from "graphql";
+import { GraphQLInputObjectType, GraphQLObjectType, GraphQLNonNull, GraphQLBoolean, GraphQLInt } from "graphql";
 import { Context } from "../../types/context.js";
 import { profileType } from "./types.js";
 import { memberTypeId } from "../../types/memberTypeId.js";
+import { UUIDType } from "../../types/uuid.js";
+import { memberTypeIdEnum } from "../memberType/types.js";
 
 type CreateProfileInputType = {
   dto: {
@@ -15,8 +17,10 @@ type CreateProfileInputType = {
 const CreateProfileInput = new GraphQLInputObjectType({
   name: "CreateProfileInput",
   fields: () => ({
-    name: { type: GraphQLString },
-    balance: { type: GraphQLFloat }
+    isMale: { type: GraphQLBoolean },
+    yearOfBirth: { type: GraphQLInt },
+    userId: { type: UUIDType },
+    memberTypeId: { type: memberTypeIdEnum },
   })
 })
 

@@ -56,27 +56,27 @@ await test('gql-mutations', async (t) => {
     t.ok(foundCreatedProfile);
   });
 
-  // await t.test('Create profile => fail; invalid dto.yearOfBirth.', async (t) => {
-  //   const {
-  //     body: { errors },
-  //   } = await gqlQuery(app, {
-  //     query: `mutation ($profileDto: CreateProfileInput!) {
-  //       createProfile(dto: $profileDto) {
-  //           id
-  //       }
-  //   }`,
-  //     variables: {
-  //       profileDto: {
-  //         ...genCreateProfileDto(randomUUID(), MemberTypeId.BUSINESS),
-  //         yearOfBirth: 123.321,
-  //       },
-  //     },
-  //   });
+  await t.test('Create profile => fail; invalid dto.yearOfBirth.', async (t) => {
+    const {
+      body: { errors },
+    } = await gqlQuery(app, {
+      query: `mutation ($profileDto: CreateProfileInput!) {
+        createProfile(dto: $profileDto) {
+            id
+        }
+    }`,
+      variables: {
+        profileDto: {
+          ...genCreateProfileDto(randomUUID(), MemberTypeId.BUSINESS),
+          yearOfBirth: 123.321,
+        },
+      },
+    });
 
-  //   t.ok(errors.length === 1);
-  //   const message = errors[0].message as string;
-  //   t.ok(message.includes(`Int cannot represent non-integer value: 123.321`));
-  // });
+    t.ok(errors.length === 1);
+    const message = errors[0].message as string;
+    t.ok(message.includes(`Int cannot represent non-integer value: 123.321`));
+  });
 
   // await t.test('Delete resources by id.', async (t) => {
   //   const { body: user1 } = await createUser(app);
