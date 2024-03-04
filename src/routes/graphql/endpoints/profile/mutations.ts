@@ -18,6 +18,15 @@ type DeleteProfileInputType = {
   id: string;
 };
 
+type ChangeProfileInputType = {
+  id: string;
+  dto: {
+    isMale: boolean;
+    yearOfBirth: number;
+    memberTypeId: memberTypeId;
+  }
+};
+
 const CreateProfileInput = new GraphQLInputObjectType({
   name: "CreateProfileInput",
   fields: () => ({
@@ -26,7 +35,7 @@ const CreateProfileInput = new GraphQLInputObjectType({
     userId: { type: UUIDType },
     memberTypeId: { type: memberTypeIdEnum },
   })
-})
+});
 
 const createProfile = {
   type: profileType as GraphQLObjectType,
@@ -36,7 +45,7 @@ const createProfile = {
   resolve: async (_: unknown, args: CreateProfileInputType, { prisma }: Context) => {
     return await prisma.profile.create({ data: args.dto })
   }
-}
+};
 
 const deleteProfile = {
   type: UUIDType,
@@ -45,9 +54,30 @@ const deleteProfile = {
     await prisma.profile.delete({ where: { id: args.id } });
     return args.id;
   }
-}
+};
+
+const ChangeProfileInput = new GraphQLInputObjectType({
+  name: "ChangeProfileInput",
+  fields: () => ({
+    isMale: { type: GraphQLBoolean },
+    yearOfBirth: { type: GraphQLInt },
+    memberTypeId: { type: memberTypeIdEnum },
+  }),
+});
+
+const changeProfile = {
+  type: profileType as GraphQLObjectType,
+  args: {
+    id: { type: new GraphQLNonNull(UUIDType) },
+    dto: { type: new GraphQLNonNull(ChangeProfileInput)}
+  },
+  resolve: async (_: unknown, args: ChangeProfileInputType, { prisma }: Context) => {
+    return await prisma.profile.update({ where: {id: args.id}, data: args.dto });
+  }
+};
 
 export const ProfileMutations = {
   createProfile,
   deleteProfile,
+  changeProfile,
 }

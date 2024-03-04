@@ -14,6 +14,14 @@ type DeleteUserInputType = {
   id: string;
 };
 
+type ChangeUserInputType = {
+  id: string;
+  dto: {
+    name: string;
+    balance: number;
+  }
+}
+
 const CreateUserInput = new GraphQLInputObjectType({
   name: "CreateUserInput",
   fields: () => ({
@@ -41,7 +49,27 @@ const deleteUser = {
   }
 }
 
+const ChangeUserInput = new GraphQLInputObjectType({
+  name: "ChangeUserInput",
+  fields: () => ({
+    name: { type: GraphQLString },
+    balance: { type: GraphQLFloat }
+  })
+})
+
+const changeUser = {
+  type: userType as GraphQLObjectType,
+  args: {
+    id: { type: new GraphQLNonNull(UUIDType) },
+    dto: { type: new GraphQLNonNull(ChangeUserInput) }
+  },
+  resolve: async (_: unknown, args: ChangeUserInputType, { prisma }: Context) => {
+    return await prisma.user.update({ where: { id: args.id }, data: args.dto });
+  }
+}
+
 export const UserMutations = {
   createUser,
   deleteUser,
+  changeUser,
 }
